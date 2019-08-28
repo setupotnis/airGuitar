@@ -18,3 +18,43 @@ const video = document.querySelector('#video');
 const audio = document.querySelector('#audio');
 let model;
 
+handTrack.startVideo(video)
+  .then(status => {
+      if(status){
+          navigator.getUserMedia({video: {}}, stream => {
+              video.srcObject = stream;
+              //run our detection
+            setInterval(runDetection, 3  00)
+          },
+          err => console.log(err)
+          );
+      }
+  })
+
+  function runDetection(){
+      model.detect(video)
+        .then(predictions => {
+            if(predictions.length !==0){
+                let hand1 = predictions[0].bbox;
+                let x = hand1[0];
+                let y = hand1[1];
+
+                if(y > 300){
+                    if(x < 200){
+                        audio.src = './air-guitar-tutorial/a-chord.mp3';
+                    }else if(x > 400){
+                        audio.src='./air-guitar-tutorial/e-chord.mp3';
+                    }else if(x > 300){
+                        audio.src = './air-guitar-tutorial/c-chord.mp3';
+                    } else if(x > 200){
+                        audio.src = './air-guitar-tutorial/b-chord.mp3';
+                    }
+                }
+                audio.play();
+            }
+        });
+  }
+handTrack.load(modelParams)
+  .then(lmodel => {
+      model = lmodel;
+  });
